@@ -4,9 +4,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -15,20 +14,31 @@ import org.apache.kafka.common.TopicPartition;
 
 public class FinalAutoApp {
 
-	private static Map<TopicPartition, OffsetAndMetadata> offsetsToBeSaved = new HashMap<TopicPartition, OffsetAndMetadata>();
+	private Map<TopicPartition, OffsetAndMetadata> offsetsToBeSaved;
+	private MessageProcessor<String, String> processor;
+	private ConsumerRebalanceListener listener;
+	private ConsumerConfiguration config;
+	private KafkaConsumer<String, String> consumer;
 
 	public static void main(String[] args) {
-		ConsumerConfiguration config = new ConsumerConfiguration();
-		KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(config.autoConsumerProperties());
-		consumer.subscribe(Collections.singletonList("letsdo"), new RebalanceListenerSeekOffset(offsetsToBeSaved, consumer));
-		System.out.println("consumer created... " + consumer.groupMetadata().memberId());
+
+		FinalAutoApp app = new FinalAutoApp();
+
+		app.offsetsToBeSaved = new HashMap<TopicPartition, OffsetAndMetadata>();
+		app.config = new ConsumerConfiguration();
+		app.processor = new SimpleMessageProcessor<String, String>(app.offsetsToBeSaved);
+		app.consumer = new KafkaConsumer<String, String>(app.config.autoConsumerProperties());
+		app.listener = new RebalanceListenerSeekOffset(app.offsetsToBeSaved, app.consumer);
+		app.consumer.subscribe(Collections.singletonList("letsdo"), app.listener);
 		boolean doProcessing = true;
+
+		System.out.println("consumer created... ");
 
 		try {
 			while (doProcessing) {
 				// when enable.auto.commit=true, then offset will be committed on every current
 				// poll, and we commit the largest offset that came in last poll
-				ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(60));
+				ConsumerRecords<String, String> records = app.consumer.poll(Duration.ofSeconds(60));
 				/*
 				 * Re balance will be triggered when consumer leave/add group or partition
 				 * updated. But re balance handler "onPartitonRevoked" will only invoked when
@@ -52,7 +62,7 @@ public class FinalAutoApp {
 					 */
 
 					// transaction start
-					storeOffsetAndProcessRecord(record);
+					app.processRecords(records);
 					// transaction end
 				}
 				/*
@@ -65,76 +75,28 @@ public class FinalAutoApp {
 			/* time to exit the poll loop then commit offsets. */
 
 			try {
-				consumer.commitSync(offsetsToBeSaved);
+				app.processor.commitOffsetSync(app.consumer, app.offsetsToBeSaved);
 				System.out.println("Successfully commited offsets when leaving poll lop...");
-				offsetsToBeSaved.clear();
+				app.offsetsToBeSaved.clear();
 			} catch (Exception ex) {
 				System.out.println("Offset commit failed...");
-				retryCommit(consumer);
+				app.processor.retryCommit(app.consumer);
 			}
 
-			//consumer.close();// enable.auto.commit=true , on close we commit the largest offset
+			app.consumer.close();// enable.auto.commit=true , on close we commit the largest
+			// offset
 			doProcessing = false;
 		}
 	}
 
-	private static void retryCommit(KafkaConsumer<String, String> consumer) {
-		System.out.println("Retrying offsets commit again...");
-		try {
-			consumer.commitSync(offsetsToBeSaved);
-			System.out.println("Successfully commited offsets during retry...");
-			offsetsToBeSaved.clear();
-		} catch (Exception ex) {
-			System.out.println("Offset commit failed in retry...");
-		}
-
-	}
-
-	private static void storeOffsetAndProcessRecord(ConsumerRecord<String, String> record) {
-		savePartitionOffsets(record);
-		processRecords(record);
-	}
-
-	private static void savePartitionOffsets(ConsumerRecord<String, String> record) {
-		offsetsToBeSaved.put(new TopicPartition(record.topic(), record.partition()),
-				new OffsetAndMetadata(record.offset() + 1));
-	}
-
-	private static void processRecords(ConsumerRecord<String, String> record) {
-		checkIfAlreadyProcessed(record);
-		System.out.println("topic = " + record.topic() + " , partition = " + record.partition() + " , offset = "
-				+ record.offset() + " , key = " + record.key() + " , value = " + record.value());
-
-		if (record.value().equalsIgnoreCase("fataal")) {
-			offsetsToBeSaved.put(new TopicPartition(record.topic(), record.partition()),
-					new OffsetAndMetadata(record.offset()));
-			throw new RuntimeException();
-		}
-
-	}
-
-	private static void checkIfAlreadyProcessed(ConsumerRecord<String, String> record) {
-		// if we not able to commit offset by any reason then next poll contains result
-		// from last committed stage which we already processed but failed to commit
-		boolean canProcess = false;
-		for (Map.Entry<TopicPartition, OffsetAndMetadata> entry : offsetsToBeSaved.entrySet()) {
-
-			if (entry.getKey().topic().equals(record.topic()) && entry.getKey().partition() == record.partition()
-					&& entry.getValue().offset() - 1 == record.offset()) {
-				canProcess = true;
+	private void processRecords(ConsumerRecords<String, String> records) {
+		for (ConsumerRecord<String, String> record : records) {
+			try {
+				this.processor.storeOffsetAndProcessRecord(record); // store and process each record
+			} catch (RecordProcessingException e) {
+				this.processor.handleMessageProcessingFailure(record, e); // handle this record, either save in db, or
+																			// send event. etc
 			}
-
-			if (canProcess == true) {
-				System.out.println("Record eligible for processing for topic = " + record.topic() + " , partition = "
-						+ record.partition() + " , offset = " + record.offset());
-			} else {
-				System.out.println("Record eligible for skipping for topic = " + record.topic() + " , partition = "
-						+ record.partition() + " , offset = " + record.offset());
-
-			}
-
 		}
 	}
-
-	
 }

@@ -15,7 +15,7 @@ public class ConsumerConfiguration {
 				"org.apache.kafka.common.serialization.StringDeserializer");
 		properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
 		properties.put(ConsumerConfig.GROUP_ID_CONFIG, "ak-auto-cg-1");
-		properties.put(ConsumerConfig.CLIENT_ID_CONFIG, "ak-consumer-2");
+		properties.put(ConsumerConfig.CLIENT_ID_CONFIG, "ak-consumer-1");
 		properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 1000);
 		properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 		return properties;

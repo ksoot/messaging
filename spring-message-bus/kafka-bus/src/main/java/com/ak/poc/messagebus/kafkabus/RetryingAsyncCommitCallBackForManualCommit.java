@@ -7,14 +7,12 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.OffsetCommitCallback;
 import org.apache.kafka.common.TopicPartition;
 
-public class RetryingAsyncCommitCallBackForManualCommit implements OffsetCommitCallback {
+public class RetryingAsyncCommitCallBackForManualCommit<K, V> implements OffsetCommitCallback {
 
-	private KafkaConsumer<String, String> consumer;
-	private long commuitSequence;
+	private KafkaConsumer<K, V> consumer;
 
-	public RetryingAsyncCommitCallBackForManualCommit(KafkaConsumer<String, String> consumer, long commuitSeq) {
+	public RetryingAsyncCommitCallBackForManualCommit(KafkaConsumer<K, V> consumer) {
 		this.consumer = consumer;
-		this.commuitSequence = commuitSeq;
 	}
 
 	public void onComplete(Map<TopicPartition, OffsetAndMetadata> offsets, Exception exception) {
@@ -24,15 +22,9 @@ public class RetryingAsyncCommitCallBackForManualCommit implements OffsetCommitC
 						+ entry.getKey().partition() + " , offset = " + entry.getValue().offset());
 			}
 		} else {
-			System.out.println("commuitSequence " +commuitSequence);
+			System.out.println("");
 		}
-		
-	}
-	
-	
 
-	public long getCommuitSequence() {
-		return commuitSequence;
 	}
 
 }
