@@ -1,4 +1,4 @@
-package com.ak.poc.spring.messagebus.springbus.config;
+package com.ak.poc.messagebus.springbus.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;

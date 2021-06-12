@@ -1,11 +1,11 @@
-package com.ak.poc.spring.messagebus.springbus.consumer;
+package com.ak.poc.messagebus.springbus.consumer;
 
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-import com.ak.poc.spring.messagebus.springbus.config.MessageBusProperties;
+import com.ak.poc.messagebus.springbus.config.MessageBusProperties;
 
 @SpringBootApplication(scanBasePackages = "com.ak.poc.spring.messagebus")
 @EnableConfigurationProperties(value = MessageBusProperties.class)

@@ -1,4 +1,4 @@
-package com.ak.poc.spring.messagebus.springbus.producer.config;
+package com.ak.poc.messagebus.springbus.producer.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import com.ak.poc.spring.messagebus.springbus.config.MessageBusProperties;
+import com.ak.poc.messagebus.springbus.config.MessageBusProperties;
 
 @Configuration
 public class MessagingConfigurationForProducer {

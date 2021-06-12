@@ -1,4 +1,4 @@
-package com.ak.poc.spring.messagebus.springbus.config;
+package com.ak.poc.messagebus.springbus.config;
 
 import java.util.HashMap;
 import java.util.Map;

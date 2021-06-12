@@ -1,4 +1,4 @@
-package com.ak.poc.spring.messagebus.springbus.producer.event.listeners;
+package com.ak.poc.messagebus.springbus.producer.event.listeners;
 
 import org.apache.kafka.clients.producer.Producer;
 import org.springframework.kafka.core.ProducerFactory.Listener;

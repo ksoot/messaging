@@ -1,11 +1,11 @@
-package com.ak.poc.spring.messagebus.springbus.producer;
+package com.ak.poc.messagebus.springbus.producer;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.kafka.core.KafkaAdmin;
 
-import com.ak.poc.spring.messagebus.springbus.config.MessageBusProperties;
-import com.ak.poc.spring.messagebus.springbus.message.Message;
+import com.ak.poc.messagebus.springbus.config.MessageBusProperties;
+import com.ak.poc.messagebus.springbus.message.Message;
 
 @SpringBootApplication
 @EnableConfigurationProperties(value = MessageBusProperties.class)

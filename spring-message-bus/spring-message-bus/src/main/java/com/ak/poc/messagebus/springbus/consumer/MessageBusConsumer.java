@@ -1,4 +1,4 @@
-package com.ak.poc.spring.messagebus.springbus.consumer;
+package com.ak.poc.messagebus.springbus.consumer;
 
 import java.util.Map;
 

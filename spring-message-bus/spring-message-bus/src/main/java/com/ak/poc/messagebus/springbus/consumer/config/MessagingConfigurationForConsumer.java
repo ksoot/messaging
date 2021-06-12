@@ -1,4 +1,4 @@
-package com.ak.poc.spring.messagebus.springbus.consumer.config;
+package com.ak.poc.messagebus.springbus.consumer.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,9 +16,9 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.LogIfLevelEnabled;
 
-import com.ak.poc.spring.messagebus.springbus.config.MessageBusProperties;
-import com.ak.poc.spring.messagebus.springbus.consumer.MyConsumer;
-import com.ak.poc.spring.messagebus.springbus.consumer.MyRecordInterceptor;
+import com.ak.poc.messagebus.springbus.config.MessageBusProperties;
+import com.ak.poc.messagebus.springbus.consumer.MyConsumer;
+import com.ak.poc.messagebus.springbus.consumer.MyRecordInterceptor;
 
 @Configuration
 public class MessagingConfigurationForConsumer {

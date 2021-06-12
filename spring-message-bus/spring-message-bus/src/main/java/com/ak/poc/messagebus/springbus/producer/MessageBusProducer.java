@@ -1,10 +1,10 @@
-package com.ak.poc.spring.messagebus.springbus.producer;
+package com.ak.poc.messagebus.springbus.producer;
 
 import java.util.Optional;
 
 import org.springframework.kafka.support.SendResult;
 
-import com.ak.poc.spring.messagebus.springbus.message.Message;
+import com.ak.poc.messagebus.springbus.message.Message;
 
 public interface MessageBusProducer<K, V, T extends Message<K, V>> {
 
