@@ -13,27 +13,31 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import com.ak.poc.messagebus.springbus.config.MessageBusProperties;
+import com.ak.poc.messagebus.springbus.common.config.CommonProperties;
 
 @Configuration
 public class MessagingConfigurationForProducer {
 
 	@Inject
-	private MessageBusProperties messageBusProp;
+	private CommonProperties commonProp;
+
+	@Inject
+	private ProducerProperties producerProp;
 
 	
 	@Bean(name = "producerProperties")
 	public Map<String, Object> producerProperties() {
 		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, messageBusProp.getBootstrapServers());
-		properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, messageBusProp.getProducerKeySerializerClass());
-		properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, messageBusProp.getProducerValueSerializerClass());
-		properties.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, messageBusProp.getRequestTimeoutMs());
-		properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, messageBusProp.getMaxBlockMs());
-		properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, messageBusProp.getBufferMemory());
-		properties.put(ProducerConfig.LINGER_MS_CONFIG, messageBusProp.getLingerMs());
-		properties.put(ProducerConfig.BATCH_SIZE_CONFIG, messageBusProp.getBatchSize());
-		properties.put(ProducerConfig.RETRIES_CONFIG, messageBusProp.getRetries());
+		properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, commonProp.getBootstrapServers());
+		properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, producerProp.getProducerKeySerializerClass());
+		properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, producerProp.getProducerValueSerializerClass());
+		properties.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, producerProp.getRequestTimeoutMs());
+		properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, producerProp.getMaxBlockMs());
+		properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, producerProp.getBufferMemory());
+		properties.put(ProducerConfig.LINGER_MS_CONFIG, producerProp.getLingerMs());
+		properties.put(ProducerConfig.BATCH_SIZE_CONFIG, producerProp.getBatchSize());
+		properties.put(ProducerConfig.RETRIES_CONFIG, producerProp.getRetries());
+		properties.put(ProducerConfig.CLIENT_ID_CONFIG, producerProp.getClientId());
 
 		return properties;
 	}

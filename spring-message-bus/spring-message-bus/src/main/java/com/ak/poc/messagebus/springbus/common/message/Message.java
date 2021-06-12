@@ -1,4 +1,4 @@
-package com.ak.poc.messagebus.springbus.message;
+package com.ak.poc.messagebus.springbus.common.message;
 
 public final class Message<K, V> {
 

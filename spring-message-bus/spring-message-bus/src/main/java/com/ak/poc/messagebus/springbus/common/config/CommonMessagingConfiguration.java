@@ -1,4 +1,4 @@
-package com.ak.poc.messagebus.springbus.config;
+package com.ak.poc.messagebus.springbus.common.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.springframework.kafka.core.KafkaAdmin;
 public class CommonMessagingConfiguration {
 
 	@Inject
-	private MessageBusProperties messageBusProp;
+	private CommonProperties commonProp;
 
 	@Bean(name = "topicProperties")
 	public Map<String, Object> topicProperties() {
@@ -28,7 +28,7 @@ public class CommonMessagingConfiguration {
 	@Bean(name = "adminProperties")
 	public Map<String, Object> adminProperties() {
 		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, messageBusProp.getBootstrapServers());
+		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, commonProp.getBootstrapServers());
 		return properties;
 	}
 

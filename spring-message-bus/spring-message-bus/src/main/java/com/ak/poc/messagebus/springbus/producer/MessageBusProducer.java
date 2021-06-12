@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.kafka.support.SendResult;
 
-import com.ak.poc.messagebus.springbus.message.Message;
+import com.ak.poc.messagebus.springbus.common.message.Message;
 
 public interface MessageBusProducer<K, V, T extends Message<K, V>> {
 

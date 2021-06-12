@@ -11,7 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 
-import com.ak.poc.messagebus.springbus.message.Message;
+import com.ak.poc.messagebus.springbus.common.message.Message;
 
 @Named(value = "asyncProducer")
 public class AsyncMessageBusProducerClient<K, V, T extends Message<K, V>> implements MessageBusProducer<K, V, T> {

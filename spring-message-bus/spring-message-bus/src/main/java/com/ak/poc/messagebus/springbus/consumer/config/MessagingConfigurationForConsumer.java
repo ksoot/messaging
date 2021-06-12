@@ -16,7 +16,7 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.LogIfLevelEnabled;
 
-import com.ak.poc.messagebus.springbus.config.MessageBusProperties;
+import com.ak.poc.messagebus.springbus.common.config.CommonProperties;
 import com.ak.poc.messagebus.springbus.consumer.MyConsumer;
 import com.ak.poc.messagebus.springbus.consumer.MyRecordInterceptor;
 
@@ -24,34 +24,37 @@ import com.ak.poc.messagebus.springbus.consumer.MyRecordInterceptor;
 public class MessagingConfigurationForConsumer {
 
 	@Inject
-	private MessageBusProperties messageBusProp;
+	private ConsumerProperties consumerProp;
+
+	@Inject
+	private CommonProperties commonProp;
 
 	@Bean(name = "consumerProperties")
 	public Map<String, Object> consumerProperties() {
 		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, messageBusProp.getBootstrapServers());
-		properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, messageBusProp.getConsumerKeyDeSerializerClass());
+		properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, commonProp.getBootstrapServers());
+		properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, consumerProp.getConsumerKeyDeSerializerClass());
 		properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-				messageBusProp.getConsumerValueDeSerializerClass());
-		//properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, messageBusProp.getFetchMaxWaitMs());
-		//properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, messageBusProp.getAutoOffsetReset());
-		//properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, messageBusProp.getAutoCommitIntervalMs());
-		//properties.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, messageBusProp.getSessionTimeoutMs());
-		properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, messageBusProp.getEnableAutoCommit());
-		properties.put(ConsumerConfig.GROUP_ID_CONFIG, messageBusProp.getGroupId());
+				consumerProp.getConsumerValueDeSerializerClass());
+		properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, consumerProp.getFetchMaxWaitMs());
+		properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, consumerProp.getAutoOffsetReset());
+		properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, consumerProp.getAutoCommitIntervalMs());
+		properties.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, consumerProp.getSessionTimeoutMs());
+		properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, consumerProp.getEnableAutoCommit());
+		properties.put(ConsumerConfig.GROUP_ID_CONFIG, consumerProp.getGroupId());
 		return properties;
 	}
 
 	@Bean
 	public <K, V> ContainerProperties containerProperties() {
-		ContainerProperties containerProps = new ContainerProperties("letsdo");
-		//containerProps.setMessageListener(new MyConsumer<K, V>());
+		ContainerProperties containerProps = new ContainerProperties("letsdoitbro");
+		// containerProps.setMessageListener(new MyConsumer<K, V>());
 		containerProps.setLogContainerConfig(true);
 		containerProps.setCommitLogLevel(LogIfLevelEnabled.Level.DEBUG);
 		containerProps.setMissingTopicsFatal(true);
-		
-		//containerProps.setAuthorizationExceptionRetryInterval(Duration.ofMinutes(1L));
-		
+
+		// containerProps.setAuthorizationExceptionRetryInterval(Duration.ofMinutes(1L));
+
 		return containerProps;
 	}
 
@@ -68,7 +71,7 @@ public class MessagingConfigurationForConsumer {
 		listenerContainer.setRecordInterceptor(new MyRecordInterceptor());
 		listenerContainer.setupMessageListener(new MyConsumer<K, V>());
 		listenerContainer.setInterceptBeforeTx(true);
-		
+
 		System.out.println("---------------created container ------------");
 		return listenerContainer;
 	}
