@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ak.poc.spring.messagebus</groupId>
-	<artifactId>spring-message-bus</artifactId>
+	<artifactId>message-bus</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-message-bus</name>
+	<name>message-bus</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -58,4 +58,8 @@
 		</plugins>
 	</build>
 
+	<packaging>pom</packaging>
+	<modules>
+		<module>spring-message-bus</module>
+	</modules>
 </project>
