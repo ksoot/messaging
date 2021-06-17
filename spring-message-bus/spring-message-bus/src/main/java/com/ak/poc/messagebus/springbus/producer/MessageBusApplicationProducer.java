@@ -14,6 +14,9 @@ import com.ak.poc.messagebus.springbus.EnableProducer;
 import com.ak.poc.messagebus.springbus.common.config.CommonProperties;
 import com.ak.poc.messagebus.springbus.common.message.Message;
 import com.ak.poc.messagebus.springbus.producer.config.ProducerProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @SpringBootApplication
 @EnableConfigurationProperties(value = { ProducerProperties.class, CommonProperties.class })
@@ -31,14 +34,14 @@ public class MessageBusApplicationProducer {
 
 	@Bean
 	ApplicationRunner applicationRunner(
-			@Named(value = "syncProducer") MessageBusProducer<Integer, String, Message<Integer, String>> producer) {
+			@Named(value = "syncProducer") MessageBusProducer<Integer, String> producer) {
 		return args -> {
 			kafkaAdmin.initialize();
 			System.out.println(".........Starting");
 			int count = 0;
 			while (count < 10) {
 				String baseMessage = "Hello count no. " + count;
-				Message<Integer, String> message = buildmessage(count, baseMessage);
+				Message<Integer> message = buildmessage(count, baseMessage);
 				producer.produceMessage(message);
 				System.out.println("-----------message sent now waiting-------");
 				Thread.currentThread().sleep(5000);
@@ -48,9 +51,24 @@ public class MessageBusApplicationProducer {
 		};
 	}
 
-	private <K, V> Message<K, V> buildmessage(int count, String baseMessage) {
-		Message<K, V> message = new Message("letsdoitbro", 0, count, baseMessage);
+	private <K> Message<K> buildmessage(int count, String baseMessage) {
+		Message<K> message = new Message("letsdoitbro", 0, count, new Person(baseMessage, count));
 		return message;
 	}
+	
+	
+}
 
+//@JsonInclude(value = Include.NON_DEFAULT)
+class Person{
+	
+	public String name;
+	public int id;
+	
+	public Person(String name, int id) {
+		super();
+		this.name = name;
+		this.id = id;
+	}
+	
 }

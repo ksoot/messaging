@@ -20,10 +20,4 @@ public class MessageBusApplicationConsumer {
 		System.out.println();
 	}
 
-	/*
-	@KafkaListener(topics = "letsdoitbro", groupId = "ak")
-	public void printMessage(String message) {
-		System.out.println("i am working -> " + message);
-	}
-	*/
 }

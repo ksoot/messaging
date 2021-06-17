@@ -8,41 +8,47 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 
 import com.ak.poc.messagebus.springbus.common.message.Message;
+import com.ak.poc.messagebus.springbus.common.message.MessageParser;
 
 @Named(value = "syncProducer")
-public class SyncMessageBusProducerClient<K, V, T extends Message<K, V>> implements MessageBusProducer<K, V, T> {
+public class SyncMessageBusProducerClient<K, V> implements MessageBusProducer<K, V> {
 
 	@Inject
 	private KafkaTemplate<K, V> kafkaTemplate;
 
 	@Override
-	public void produceMessage(T message) {
+	public void produceMessage(Message<K> message) {
 		SendResult<K, V> result = null;
 		System.out.println("producing message -> " + message.toString());
 		
 		try {
 			result = kafkaTemplate.send(message.topic(), message.partition(),
-					message.key(), message.data()).get(10, TimeUnit.SECONDS);
+					message.key(), MessageParser.<K,V>parseToJSON(message)).get(10, TimeUnit.SECONDS);
 	        handleSuccess(message, result);
 	    }
-	    catch (ExecutionException | TimeoutException | InterruptedException e) {
-	        handleFailure(message, Optional.ofNullable(result), e);
-	    }
+	    catch (ExecutionException e) {
+	    	KafkaProducerException ex = (KafkaProducerException)e.getCause();
+	        handleFailure(message, Optional.ofNullable(result), ex);
+	    } catch (TimeoutException | InterruptedException e) {
+	    	handleFailure(message, Optional.ofNullable(result), e);
+		}
 	  
 		
 	}
 
 	@Override
-	public void handleSuccess(T message, SendResult<K, V> result) {
+	public void handleSuccess(Message<K> message, SendResult<K, V> result) {
 		System.out.println("produced message successfully with details ->" + result.toString());
 	}
 
 	@Override
-	public void handleFailure(T message, Optional<SendResult<K, V>> optionalResult, Throwable ex) {
+	public void handleFailure(Message<K> message, Optional<SendResult<K, V>> optionalResult, Throwable ex) {
 		System.out.println("Failed to produce message -> " + message.toString());
 		System.out.println("Failed message -> " + ex.getMessage());
 		System.out.println("Failed cause -> " + ex.getCause());
@@ -51,5 +57,12 @@ public class SyncMessageBusProducerClient<K, V, T extends Message<K, V>> impleme
 		
 	}
 
+	@Override
+	public void handleFailure(Message<K> message, Optional<SendResult<K, V>> optionalResult,
+			KafkaProducerException ex) {
+		KafkaProducerException producerException = (KafkaProducerException)ex;
+		ProducerRecord<Integer, String> failed = producerException.getFailedProducerRecord();
+		throw new RuntimeException(producerException.getMessage(), producerException);
+	}
 
 }

@@ -7,12 +7,12 @@ public class ProducerListener<K, V> implements Listener<K, V>{
 	
 	@Override
 	public void producerAdded(String id, Producer<K, V> producer) {
-		System.out.println("producerAdded -> "+id);
+		System.out.println("producerAdded... -> "+id);
 	}
 	
 	@Override
 	public void producerRemoved(String id, Producer<K, V> producer) {
-		System.out.println("producerRemoved -> "+id);
+		System.out.println("producerRemoved... -> "+id);
 	}
 
 }

@@ -1,13 +1,17 @@
 package com.ak.poc.messagebus.springbus.common.message;
 
-public final class Message<K, V> {
+public final class Message<K> {
 
-	private final String topic;
-	private final int partition;
-	private final K key;
-	private final V data;
+	private String topic;
+	private int partition;
+	private K key;
+	private Object data;
 
-	public Message(String topic, int partition, K key, V data) {
+	public Message() {
+		
+	}
+	
+	public Message(String topic, int partition, K key, Object data) {
 		this.topic = topic;
 		this.partition = partition;
 		this.key = key;
@@ -27,7 +31,7 @@ public final class Message<K, V> {
 		return key;
 	}
 
-	public V data() {
+	public Object data() {
 		return data;
 	}
 

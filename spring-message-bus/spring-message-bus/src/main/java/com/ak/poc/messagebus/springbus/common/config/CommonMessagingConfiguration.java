@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.common.config.TopicConfig;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,12 @@ public class CommonMessagingConfiguration {
 		kafkaAdmin.setFatalIfBrokerNotAvailable(true);
 		return kafkaAdmin;
 	}
-	
+
+	@Bean
+	public AdminClient adminClient(KafkaAdmin kafkaAdmin) {
+		AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties());
+	//	adminClient.alterConfigs(null)
+		return  adminClient;
+	}
 
 }

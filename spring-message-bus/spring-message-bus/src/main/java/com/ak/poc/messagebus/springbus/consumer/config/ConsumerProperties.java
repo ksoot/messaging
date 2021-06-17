@@ -6,6 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties()
 public class ConsumerProperties {
 
+	@Value("${kafka.consumer.commitMode}")
+	private String commitMode;
+	
 	@Value("${kafka.consumer.key-deserializer}")
 	private String consumerKeyDeSerializerClass;
 
@@ -61,6 +64,10 @@ public class ConsumerProperties {
 
 	public String getGroupId() {
 		return groupId;
+	}
+	
+	public String getCommitMode() {
+		return commitMode;
 	}
 
 }
