@@ -30,6 +30,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>spring-message-bus</module>
-		<module>kafka-bus</module>
+		<module>kafka-message-bus</module>
 	</modules>
 </project>

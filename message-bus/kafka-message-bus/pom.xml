@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.ak.poc.messagebus.kafkabus</groupId>
-	<artifactId>kafka-bus</artifactId>
+	<artifactId>kafka-message-bus</artifactId>
 
 	<dependencies>
 		<dependency>
